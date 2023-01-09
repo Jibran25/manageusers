@@ -5367,13 +5367,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       manages: [],
       api: 'http://localhost:8000/api/manages',
-      manage_input: 'default'
+      manage_input_name: '',
+      manage_input_email: '',
+      edit_manage_id: '',
+      edit_index: ''
     };
   },
   mounted: function mounted() {
@@ -5387,7 +5395,52 @@ __webpack_require__.r(__webpack_exports__);
 
   methods: {
     saveManage: function saveManage() {
-      console.log(this.manage_input);
+      var _this2 = this;
+      if (this.manage_input_name && this.manage_input_email) {
+        this.axios.post(this.api, {
+          'name': this.manage_input_name,
+          'email': this.manage_input_email
+        }).then(function (res) {
+          _this2.manages.push(res.data);
+        });
+      }
+      // console.log(this.manage_input_name + ' ' +this.manage_input_email);
+    },
+    deleteManage: function deleteManage(index) {
+      var _this3 = this;
+      if (this.manages[index].id) {
+        this.axios["delete"](this.api + '/' + this.manages[index].id).then(function (res) {
+          _this3.manages.splice(index, 1);
+        });
+      }
+    },
+    editManage: function editManage(index) {
+      if (this.manages[index].id) {
+        this.manage_input_name = this.manages[index].name;
+        this.manage_input_email = this.manages[index].email;
+        this.edit_manage_id = this.manages[index].id;
+        this.edit_index = index;
+        this.manages.push();
+      }
+    },
+    updateManage: function updateManage() {
+      var _this4 = this;
+      if (this.manage_input_name && this.manage_input_email) {
+        this.axios.put(this.api, {
+          'name': this.manage_input_name,
+          'email': this.manage_input_email
+        }).then(function (res) {
+          // this.todos.push(res.data);
+          _this4.manages[_this4.edit_index].name = res.data.name;
+          _this4.manages[_this4.edit_index].email = res.data.email;
+
+          // this.todo_input='';
+          _this4.resetManage();
+        });
+      }
+    },
+    resetManage: function resetManage() {
+      this.edit_manage_id = '', this.edit_index = '', this.manage_input_name = '', this.manage_input_email = '';
     }
   }
 });
@@ -28224,48 +28277,90 @@ var render = function () {
           _vm._m(1),
           _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
-            _c("div", { staticClass: "input-group" }, [
+            _c("div", {}, [
               _c("input", {
                 directives: [
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.manage_input,
-                    expression: "manage_input",
+                    value: _vm.manage_input_name,
+                    expression: "manage_input_name",
                   },
                 ],
                 staticClass: "form-control rounded",
                 attrs: {
                   type: "text",
-                  placeholder: " ",
+                  placeholder: "Enter Name",
                   "aria-label": "",
                   "aria-describedby": "",
                 },
-                domProps: { value: _vm.manage_input },
+                domProps: { value: _vm.manage_input_name },
                 on: {
                   input: function ($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.manage_input = $event.target.value
+                    _vm.manage_input_name = $event.target.value
+                  },
+                },
+              }),
+              _c("br"),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.manage_input_email,
+                    expression: "manage_input_email",
+                  },
+                ],
+                staticClass: "form-control rounded",
+                attrs: {
+                  type: "email",
+                  placeholder: "Enter Email",
+                  "aria-label": "",
+                  "aria-describedby": "",
+                },
+                domProps: { value: _vm.manage_input_email },
+                on: {
+                  input: function ($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.manage_input_email = $event.target.value
                   },
                 },
               }),
               _vm._v(" "),
               _c("div", { staticClass: "input-group-append m-1" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-info",
-                    attrs: { type: "button" },
-                    on: {
-                      click: function ($event) {
-                        return _vm.saveManage()
+                !_vm.edit_manage_id
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-info",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function ($event) {
+                            return _vm.saveManage()
+                          },
+                        },
                       },
-                    },
-                  },
-                  [_vm._v("Add Users")]
-                ),
+                      [_vm._v("Add Users")]
+                    )
+                  : _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-info",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function ($event) {
+                            return _vm.updateManage()
+                          },
+                        },
+                      },
+                      [_vm._v("Update Users")]
+                    ),
               ]),
             ]),
             _vm._v(" "),
@@ -28275,6 +28370,11 @@ var render = function () {
                 staticClass: "btn btn-sm text-danger",
                 staticStyle: { float: "right" },
                 attrs: { type: "button" },
+                on: {
+                  click: function ($event) {
+                    return _vm.resetManage()
+                  },
+                },
               },
               [_vm._v("\n                        Reset")]
             ),
@@ -28286,13 +28386,41 @@ var render = function () {
                 "tbody",
                 _vm._l(_vm.manages, function (manage, index) {
                   return _c("tr", { key: index }, [
-                    _c("td", [_vm._v(_vm._s(manage.id))]),
+                    _c("td", [_vm._v(_vm._s(++index))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(manage.name))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(manage.email))]),
                     _vm._v(" "),
-                    _vm._m(3, true),
+                    _c("td", [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-danger",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function ($event) {
+                              return _vm.deleteManage(--index)
+                            },
+                          },
+                        },
+                        [_vm._v("\n                                    Delete")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function ($event) {
+                              return _vm.editManage(--index)
+                            },
+                          },
+                        },
+                        [_vm._v("\n                                    Edit")]
+                      ),
+                    ]),
                   ])
                 }),
                 0
@@ -28335,24 +28463,6 @@ var staticRenderFns = [
       _c("th", [_vm._v("Email")]),
       _vm._v(" "),
       _c("th", [_vm._v("Action")]),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c(
-        "button",
-        { staticClass: "btn btn-danger", attrs: { type: "button" } },
-        [_vm._v("\n                                    Delete")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn btn-primary", attrs: { type: "button" } },
-        [_vm._v("\n                                    Edit")]
-      ),
     ])
   },
 ]

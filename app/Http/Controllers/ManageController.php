@@ -35,7 +35,8 @@ class ManageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         $manage = Manage::create($request->all());
+        return $manage;
     }
 
     /**
@@ -69,7 +70,9 @@ class ManageController extends Controller
      */
     public function update(Request $request, Manage $manage)
     {
-        //
+        $manage->update($request->all());
+        return 'hello';
+
     }
 
     /**
@@ -79,7 +82,9 @@ class ManageController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Manage $manage)
-    {
-        //
+    {   
+        // $manage=Manage::find($id);
+        $manage->delete();
+        return response()->json('success');
     }
 }
