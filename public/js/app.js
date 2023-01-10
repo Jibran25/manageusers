@@ -5402,6 +5402,8 @@ __webpack_require__.r(__webpack_exports__);
           'email': this.manage_input_email
         }).then(function (res) {
           _this2.manages.push(res.data);
+          _this2.manage_input_name = '';
+          _this2.manage_input_email = '';
         });
       }
       // console.log(this.manage_input_name + ' ' +this.manage_input_email);

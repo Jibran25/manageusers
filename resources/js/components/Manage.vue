@@ -82,6 +82,8 @@ export default {
             if(this.manage_input_name && this.manage_input_email){
                 this.axios.post(this.api,{'name': this.manage_input_name,'email':this.manage_input_email}).then(res=>{
                     this.manages.push(res.data);
+                    this.manage_input_name='';
+                    this.manage_input_email='';
                 });
             }
             // console.log(this.manage_input_name + ' ' +this.manage_input_email);
