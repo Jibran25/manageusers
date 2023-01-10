@@ -71,7 +71,7 @@ class ManageController extends Controller
     public function update(Request $request, Manage $manage)
     {
         $manage->update($request->all());
-        return 'hello';
+        return response()->json($manage);
 
     }
 

@@ -5420,16 +5420,16 @@ __webpack_require__.r(__webpack_exports__);
         this.manage_input_email = this.manages[index].email;
         this.edit_manage_id = this.manages[index].id;
         this.edit_index = index;
-        this.manages.push();
       }
     },
     updateManage: function updateManage() {
       var _this4 = this;
-      if (this.manage_input_name && this.manage_input_email) {
-        this.axios.put(this.api, {
+      if (this.manage_input_name.length > 0 && this.manage_input_email.length > 0) {
+        var data = {
           'name': this.manage_input_name,
           'email': this.manage_input_email
-        }).then(function (res) {
+        };
+        this.axios.patch(this.api + '/' + this.manages[this.edit_index].id, data).then(function (res) {
           // this.todos.push(res.data);
           _this4.manages[_this4.edit_index].name = res.data.name;
           _this4.manages[_this4.edit_index].email = res.data.email;
@@ -5439,6 +5439,16 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
     },
+    //     if(this.manage_input_name && this.manage_input_email){
+    //     this.axios.put(this.api,{'name': this.manage_input_name,'email':this.manage_input_email}).then(res =>{
+    //         // this.todos.push(res.data);
+    //             this.manages[this.edit_index].name=res.data.name;
+    //             this.manages[this.edit_index].email=res.data.email;
+    //         // this.todo_input='';
+    //             this.resetManage();
+    //         });            
+    //    }
+    // },
     resetManage: function resetManage() {
       this.edit_manage_id = '', this.edit_index = '', this.manage_input_name = '', this.manage_input_email = '';
     }
